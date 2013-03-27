@@ -691,6 +691,10 @@ public class Entity {
         for(Property property : properties) {
             checkAdditionalImportsProperty(property);
         }
+        
+        for(SerializedProperty property : serializedProperties) {
+            checkAdditionalImportsSerializedProperty(property);
+        }
 
         checkAddionalImportsAnnotaion(annotations);
 
@@ -704,6 +708,12 @@ public class Entity {
     }
 
     private void checkAdditionalImportsProperty(Property property) {
+        checkAddionalImportsAnnotaion(property.getFieldAnnotations());
+        checkAddionalImportsAnnotaion(property.getGetterAnnotations());
+        checkAddionalImportsAnnotaion(property.getSetterAnnotations());
+    }
+    
+    private void checkAdditionalImportsSerializedProperty(SerializedProperty property) {
         checkAddionalImportsAnnotaion(property.getFieldAnnotations());
         checkAddionalImportsAnnotaion(property.getGetterAnnotations());
         checkAddionalImportsAnnotaion(property.getSetterAnnotations());

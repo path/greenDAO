@@ -85,6 +85,7 @@ as ifc>${ifc}<#if ifc_has_next>, </#if></#list></#if> {
 <#if  entity.serializedProperties?has_content>
     //denormalized properties
     <#list entity.serializedProperties as serialized>
+    <@print_annotations serialized.fieldAnnotations, "    "/>
     private ${serialized.className} ${serialized.propertyName};
     </#list>
 </#if>
