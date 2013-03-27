@@ -16,6 +16,7 @@ public class SerializedProperty {
     protected String genericClassName;
     protected List<String> imports = new ArrayList<String>();
 
+    private List<Annotation> fieldAnnotations = new ArrayList<Annotation>();
     private List<Annotation> setterAnnotations = new ArrayList<Annotation>();
     private List<Annotation> getterAnnotations = new ArrayList<Annotation>();
 
@@ -25,6 +26,7 @@ public class SerializedProperty {
         this.className = className;
         setGenericClassNameFromClassName(className);
         property.setSerialized(this);
+        fieldAnnotations.add(new Annotation("SerializedField").withPackage("de.greenrobot.dao.annotations.SerializedField"));
     }
 
     private static Map<String, String> genericMapping = new HashMap<String, String>();
@@ -69,6 +71,10 @@ public class SerializedProperty {
         return className;
     }
 
+    public List<Annotation> getFieldAnnotations() {
+        return fieldAnnotations;
+    }
+    
     public List<Annotation> getSetterAnnotations() {
         return setterAnnotations;
     }
@@ -76,7 +82,7 @@ public class SerializedProperty {
     public List<Annotation> getGetterAnnotations() {
         return getterAnnotations;
     }
-
+    
     public SerializedProperty addSetterAnnotation(Annotation annotation) {
         setterAnnotations.add(annotation);
         return this;
