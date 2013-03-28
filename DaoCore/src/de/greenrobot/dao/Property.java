@@ -22,7 +22,7 @@ import de.greenrobot.dao.WhereCondition.PropertyCondition;
 
 /**
  * Meta data describing a property mapped to a database column; used to create WhereCondition object used by the query builder.
- * 
+ *
  * @author Markus
  */
 public class Property {
@@ -53,6 +53,11 @@ public class Property {
     /** Creates an "LIKE" condition  for this property. */
     public WhereCondition like(String value) {
         return new PropertyCondition(this, " LIKE ?", value);
+    }
+
+    /** Creates an "LIKE" condition  for this property. */
+    public WhereCondition notLike(String value) {
+        return new PropertyCondition(this, " NOT LIKE ?", value);
     }
 
     /** Creates an "BETWEEN ... AND ..." condition  for this property. */
