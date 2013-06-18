@@ -34,9 +34,9 @@ import android.database.Cursor;
  * entities. However, to avoid leaked cursors, you should not rely on this behavior: if an exception occurs before the
  * entire list is read, you should close the lazy list (and thus the underlying cursor) on your own to be on the safe
  * side.
- * 
+ *
  * @author Markus
- * 
+ *
  * @param <E>
  *            Entity type.
  */
@@ -127,7 +127,7 @@ public class LazyList<E> implements List<E>, Closeable {
     private final ReentrantLock lock;
     private volatile int loadedCount;
 
-    LazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities) {
+    public LazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities) {
         this.dao = dao;
         this.cursor = cursor;
         size = cursor.getCount();

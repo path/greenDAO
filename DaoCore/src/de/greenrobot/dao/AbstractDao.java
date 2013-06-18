@@ -197,7 +197,7 @@ public abstract class AbstractDao<T, K> {
         }
     }
 
-    protected List<T> loadAllAndCloseCursor(Cursor cursor) {
+    public List<T> loadAllAndCloseCursor(Cursor cursor) {
         try {
             return loadAllFromCursor(cursor);
         } finally {
