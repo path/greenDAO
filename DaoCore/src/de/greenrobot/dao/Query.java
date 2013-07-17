@@ -15,10 +15,10 @@
  */
 package de.greenrobot.dao;
 
+import android.database.Cursor;
+
 import java.util.Collection;
 import java.util.List;
-
-import android.database.Cursor;
 
 /**
  * A repeatable query returning entities.
@@ -109,7 +109,7 @@ public class Query<T> extends AbstractQuery<T> {
     public LazyList<T> listLazy() {
         long start = System.nanoTime();
         Cursor cursor = dao.db.rawQuery(sql, parameters);
-        LazyList<T> result = new LazyList<T>(dao, cursor, true);
+        LazyList<T> result = DbUtils.createLazyList(dao, cursor, true);
         if(queryListener != null) {
             queryListener.onListLazy(this, System.nanoTime() - start);
         }
@@ -123,7 +123,7 @@ public class Query<T> extends AbstractQuery<T> {
     public LazyList<T> listLazyUncached() {
         long start = System.nanoTime();
         Cursor cursor = dao.db.rawQuery(sql, parameters);
-        LazyList<T> result = new LazyList<T>(dao, cursor, false);
+        LazyList<T> result = DbUtils.createLazyList(dao, cursor, false);
         if(queryListener != null) {
             queryListener.onListLazy(this, System.nanoTime() - start);
         }

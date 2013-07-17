@@ -31,6 +31,7 @@ public class DbUtils {
     private static ExceptionListener exceptionListener;
     private static PerfListener perfListener;
     private static CustomSerializeAndDeserializer customSerializeAndDeserializer;
+    private static LazyListProvider lazyListProvider;
 
     public static void vacuum(SQLiteDatabase db) {
         db.execSQL("VACUUM");
@@ -242,6 +243,17 @@ public class DbUtils {
         DbUtils.customSerializeAndDeserializer = customSerializeAndDeserializer;
     }
 
+    public static void setLazyListProvider(LazyListProvider lazyListProvider) {
+        DbUtils.lazyListProvider = lazyListProvider;
+    }
+
+    public static <E> LazyList<E> createLazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities) {
+        if(lazyListProvider == null) {
+            return new LazyList<E>(dao, cursor, cacheEntities);
+        }
+        return lazyListProvider.createLazyList(dao, cursor, cacheEntities);
+    }
+
     public static interface ExceptionListener {
         public void onSerializationError(IOException ioException);
         public void onDeserializationError(ClassNotFoundException cnfException);
@@ -259,6 +271,10 @@ public class DbUtils {
     public static interface CustomSerializeAndDeserializer {
         public Object deserialize(byte[] b, Class klass) throws IOException, ClassNotFoundException;
         public byte[] serialize(Object o) throws IOException;
+    }
+
+    public static interface LazyListProvider {
+        public <E> LazyList<E> createLazyList(AbstractDao<E, ?> dao, Cursor cursor, boolean cacheEntities);
     }
 
 }
