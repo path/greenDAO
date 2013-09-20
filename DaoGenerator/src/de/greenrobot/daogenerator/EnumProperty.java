@@ -34,6 +34,15 @@ public class EnumProperty {
         return className;
     }
 
+    public EnumProperty constant() {
+        property.setConstant(true);
+        return this;
+    }
+
+    public boolean isConstant() {
+        return property.isConstant();
+    }
+
     public List<Annotation> getSetterAnnotations() {
         return setterAnnotations;
     }

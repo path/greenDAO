@@ -71,10 +71,19 @@ public class SerializedProperty {
         return className;
     }
 
+    public SerializedProperty constant() {
+        property.setConstant(true);
+        return this;
+    }
+
+    public boolean isConstant() {
+        return property.isConstant();
+    }
+
     public List<Annotation> getFieldAnnotations() {
         return fieldAnnotations;
     }
-    
+
     public List<Annotation> getSetterAnnotations() {
         return setterAnnotations;
     }
@@ -82,7 +91,7 @@ public class SerializedProperty {
     public List<Annotation> getGetterAnnotations() {
         return getterAnnotations;
     }
-    
+
     public SerializedProperty addSetterAnnotation(Annotation annotation) {
         setterAnnotations.add(annotation);
         return this;

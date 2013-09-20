@@ -289,17 +289,33 @@ property>${property.javaType} ${property.propertyName}<#if property_has_next>, <
             return;//both came from db, no need to run this.
         }
         <#list entity.properties as property>
+
             <#if property.serialized??>
         //serialized
-        if(other.get${property.serialized.propertyName?cap_first}() != null) {
+                <#if property.constant >
+        //constant serialized field
+        if(${property.propertyName} == null && ${property.serialized.propertyName} == null) {
+                <#else>
+                if(other.get${property.serialized.propertyName?cap_first}() != null) {
+                </#if>
             set${property.serialized.propertyName?cap_first}(other.get${property.serialized.propertyName?cap_first}());
         }
             <#elseif property.enumarated??>
+                <#if property.constant >
+        //constant property
+        if(${property.propertyName} == null && ${property.enumarated.propertyName} == null) {
+                <#else>
         if(other.get${property.enumarated.propertyName?cap_first}() != null) {
+                </#if>
             set${property.enumarated.propertyName?cap_first}(other.get${property.enumarated.propertyName?cap_first}());
         }
             <#else>
+                <#if property.constant >
+        //constant property field
+        if(${property.propertyName} == null) {
+                <#else>
         if(other.${property.propertyName} != null) {
+                </#if>
             this.${property.propertyName} = other.${property.propertyName};
         }
             </#if>

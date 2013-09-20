@@ -23,6 +23,10 @@ import java.util.List;
 /** Model class for an entity's property: a Java property mapped to a data base column. */
 public class Property {
 
+    public void setConstant(boolean constant) {
+        this.constant = constant;
+    }
+
     public static class PropertyBuilder {
         private final Property property;
 
@@ -97,6 +101,11 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder constant() {
+            property.constant = true;
+            return this;
+        }
+
         public PropertyBuilder index() {
             Index index = new Index();
             index.addProperty(property);
@@ -146,6 +155,8 @@ public class Property {
 
     private boolean unique;
     private boolean notNull;
+    //means this field does never change. helpful for creating much more efficient updateNotNulls
+    private boolean constant;
     private SerializedProperty serialized;
     private EnumProperty enumarated;
 
@@ -223,6 +234,10 @@ public class Property {
 
     public boolean isNotNull() {
         return notNull;
+    }
+
+    public boolean isConstant() {
+        return constant;
     }
 
     public String getJavaType() {
