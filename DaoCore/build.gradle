@@ -1,10 +1,14 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
 buildscript {
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.1'
+        classpath 'com.android.tools.build:gradle:0.8.+'
     }
 }
 
@@ -57,7 +61,7 @@ uploadArchives {
             pom.project {
                 groupId 'de.greenrobot.dao'
                 artifactId 'core'
-                version '1.1.2'
+                version '1.1.3'
             }
         }
     }
