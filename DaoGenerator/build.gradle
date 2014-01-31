@@ -1,0 +1,77 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.8+'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+
+repositories {
+    maven { url 'http://repo1.maven.org/maven2' }
+}
+
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+        resources {
+            srcDir 'src-template'
+        }
+    }
+}
+
+dependencies {
+    compile 'org.freemarker:freemarker:2.3.18'
+}
+
+// task libraryJar(type: Jar) {
+//     from sourceSets.main.output
+//     baseName "generator"
+// }
+// 
+// artifacts.add('archives', tasks["libraryJar"]);
+
+def deployToProd = hasProperty("pathMaven.deployToProd") && project.ext["pathMaven.deployToProd"].toBoolean()
+println "will deploy to prod?" + deployToProd
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if(deployToProd) {
+                snapshotRepository(url: project.ext["pathMaven.repo.snapshots"]) {
+                    authentication(userName: project.ext["pathMaven.username"], password: project.ext["pathMaven.password"]);
+                }
+
+                repository(url: project.ext["pathMaven.repo.releases"]) {
+                    authentication(userName: project.ext["pathMaven.username"], password: project.ext["pathMaven.password"]);
+                }
+            } else {
+                repository(url: mavenLocal().getUrl())
+            }
+
+            pom.project {
+                groupId 'de.greenrobot.dao'
+                artifactId 'generator'
+                version '1.1-SNAPSHOT'
+            }
+        }
+    }
+}
