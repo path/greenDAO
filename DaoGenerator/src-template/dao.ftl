@@ -53,8 +53,8 @@ import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
 </#if>
 
-<#if entity.javaPackageDao != schema.defaultJavaPackageDao>
-import ${schema.defaultJavaPackageDao}.DaoSession;
+<#if entity.javaPackageDao != schema.javaPackageMasterSession>
+import ${schema.javaPackageMasterSession}.DaoSession;
 
 </#if>
 <#if entity.additionalImportsDao?has_content>

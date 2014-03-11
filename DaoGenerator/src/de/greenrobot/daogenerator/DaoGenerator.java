@@ -103,26 +103,31 @@ public class DaoGenerator {
 
         System.out.println("Processing schema version " + schema.getVersion() + "...");
 
+        String generateForApp = schema.getGenerateForApp();
+
         List<Entity> entities = schema.getEntities();
         for (Entity entity : entities) {
-            generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
-            if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
-                generate(templateEntity, outDirModelFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
-                generate(templateEntityBase, outDirFile, entity.getJavaPackage(), entity.getClassNameBase(), schema, entity);
-            }
-            if (outDirTestFile != null && !entity.isSkipGenerationTest()) {
-                String javaPackageTest = entity.getJavaPackageTest();
-                String classNameTest = entity.getClassNameTest();
-                File javaFilename = toJavaFilename(outDirTestFile, javaPackageTest, classNameTest);
-                if (!javaFilename.exists()) {
-                    generate(templateDaoUnitTest, outDirTestFile, javaPackageTest, classNameTest, schema, entity);
-                } else {
-                    System.out.println("Skipped " + javaFilename.getCanonicalPath());
+            if ((generateForApp != null && entity.getOnlyForApps().contains(generateForApp))
+                || (generateForApp == null && entity.getOnlyForApps().isEmpty())) {
+                generate(templateDao, outDirFile, entity.getJavaPackageDao(), entity.getClassNameDao(), schema, entity);
+                if (!entity.isProtobuf() && !entity.isSkipGeneration()) {
+                    generate(templateEntity, outDirModelFile, entity.getJavaPackage(), entity.getClassName(), schema, entity);
+                    generate(templateEntityBase, outDirFile, entity.getJavaPackage(), entity.getClassNameBase(), schema, entity);
+                }
+                if (outDirTestFile != null && !entity.isSkipGenerationTest()) {
+                    String javaPackageTest = entity.getJavaPackageTest();
+                    String classNameTest = entity.getClassNameTest();
+                    File javaFilename = toJavaFilename(outDirTestFile, javaPackageTest, classNameTest);
+                    if (!javaFilename.exists()) {
+                        generate(templateDaoUnitTest, outDirTestFile, javaPackageTest, classNameTest, schema, entity);
+                    } else {
+                        System.out.println("Skipped " + javaFilename.getCanonicalPath());
+                    }
                 }
             }
         }
-        generate(templateDaoMaster, outDirFile, schema.getDefaultJavaPackageDao(), "DaoMaster", schema, null);
-        generate(templateDaoSession, outDirFile, schema.getDefaultJavaPackageDao(), "DaoSession", schema, null);
+        generate(templateDaoMaster, outDirFile, schema.getJavaPackageMasterSession(), "DaoMaster", schema, null);
+        generate(templateDaoSession, outDirFile, schema.getJavaPackageMasterSession(), "DaoSession", schema, null);
 
         long time = System.currentTimeMillis() - start;
         System.out.println("Processed " + entities.size() + " entities in " + time + "ms");

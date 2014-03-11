@@ -81,6 +81,8 @@ public class Entity {
     private Boolean active;
     private Boolean hasKeepSections;
 
+    private final List<String> onlyForApps = new ArrayList<String>();
+
     Entity(Schema schema, String className) {
         this.schema = schema;
         this.className = className;
@@ -745,5 +747,13 @@ public class Entity {
     @Override
     public String toString() {
         return "Entity " + className + " (package: " + javaPackage + ")";
+    }
+
+    public List<String> getOnlyForApps() {
+        return onlyForApps;
+    }
+
+    public void addOnlyForApp(String app) {
+        onlyForApps.add(app);
     }
 }

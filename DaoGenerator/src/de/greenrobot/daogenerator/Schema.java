@@ -32,12 +32,15 @@ public class Schema {
     private final String defaultJavaPackage;
     private String defaultJavaPackageDao;
     private String defaultJavaPackageTest;
+    private String javaPackageMasterSession;
     private final List<Entity> entities;
     private Map<PropertyType, String> propertyToDbType;
     private Map<PropertyType, String> propertyToJavaTypeNotNull;
     private Map<PropertyType, String> propertyToJavaTypeNullable;
     private boolean hasKeepSectionsByDefault;
     private boolean useActiveEntitiesByDefault;
+
+    private String generateForApp;
 
     public Schema(int version, String defaultJavaPackage) {
         this.version = version;
@@ -159,6 +162,14 @@ public class Schema {
         this.defaultJavaPackageTest = defaultJavaPackageTest;
     }
 
+    public String getJavaPackageMasterSession() {
+        return javaPackageMasterSession;
+    }
+
+    public void setJavaPackageMasterSession(String javaPackageMasterSession) {
+        this.javaPackageMasterSession = javaPackageMasterSession;
+    }
+
     public List<Entity> getEntities() {
         return entities;
     }
@@ -178,6 +189,9 @@ public class Schema {
         if (defaultJavaPackageTest == null) {
             defaultJavaPackageTest = defaultJavaPackageDao;
         }
+        if (javaPackageMasterSession == null) {
+            javaPackageMasterSession = defaultJavaPackageDao;
+        }
         for (Entity entity : entities) {
             entity.init2ndPass();
         }
@@ -189,4 +203,11 @@ public class Schema {
         }
     }
 
+    public String getGenerateForApp() {
+        return generateForApp;
+    }
+
+    public void setGenerateForApp(String generateForApp) {
+        this.generateForApp = generateForApp;
+    }
 }
