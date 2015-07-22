@@ -59,22 +59,27 @@ public class DaoMaster extends AbstractDaoMaster {
     }
 
     public static abstract class OpenHelper extends SQLiteOpenHelper {
+        private Runnable onPostTableCreateRunnable;
 
-        public OpenHelper(Context context, String name, CursorFactory factory) {
+        public OpenHelper(Context context, String name, CursorFactory factory, Runnable onPostTableCreateRunnable) {
             super(context, name, factory, SCHEMA_VERSION);
+            this.onPostTableCreateRunnable = onPostTableCreateRunnable;
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
             Log.i("greenDAO", "Creating tables for schema version " + SCHEMA_VERSION);
             createAllTables(db, false);
+            if (onPostTableCreateRunnable != null) {
+                onPostTableCreateRunnable.run();
+            }
         }
     }
 
     /** WARNING: Drops all table on Upgrade! Use only during development. */
     public static class DevOpenHelper extends OpenHelper {
-        public DevOpenHelper(Context context, String name, CursorFactory factory) {
-            super(context, name, factory);
+        public DevOpenHelper(Context context, String name, CursorFactory factory, Runnable onPostTableCreateRunnable) {
+            super(context, name, factory, onPostTableCreateRunnable);
         }
 
         @Override

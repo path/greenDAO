@@ -698,7 +698,7 @@ public class Entity {
             checkAdditionalImportsSerializedProperty(property);
         }
 
-        checkAddionalImportsAnnotaion(annotations);
+        checkAddionalImportsAnnotation(annotations);
 
         //for entity itself not the base class. we need to import all class annotations
         for(Annotation annotation : annotations) {
@@ -710,18 +710,18 @@ public class Entity {
     }
 
     private void checkAdditionalImportsProperty(Property property) {
-        checkAddionalImportsAnnotaion(property.getFieldAnnotations());
-        checkAddionalImportsAnnotaion(property.getGetterAnnotations());
-        checkAddionalImportsAnnotaion(property.getSetterAnnotations());
+        checkAddionalImportsAnnotation(property.getFieldAnnotations());
+        checkAddionalImportsAnnotation(property.getGetterAnnotations());
+        checkAddionalImportsAnnotation(property.getSetterAnnotations());
     }
     
     private void checkAdditionalImportsSerializedProperty(SerializedProperty property) {
-        checkAddionalImportsAnnotaion(property.getFieldAnnotations());
-        checkAddionalImportsAnnotaion(property.getGetterAnnotations());
-        checkAddionalImportsAnnotaion(property.getSetterAnnotations());
+        checkAddionalImportsAnnotation(property.getFieldAnnotations());
+        checkAddionalImportsAnnotation(property.getGetterAnnotations());
+        checkAddionalImportsAnnotation(property.getSetterAnnotations());
     }
 
-    private void checkAddionalImportsAnnotaion(List<Annotation> annotations) {
+    private void checkAddionalImportsAnnotation(List<Annotation> annotations) {
         for(Annotation annotation : annotations) {
             if(annotation.getPackage() != null) {
                 additionalImportsEntityBase.add(annotation.getPackage());

@@ -30,7 +30,7 @@ package ${entity.javaPackage};
 import java.util.List;
 </#if>
 <#if entity.active>
-import ${schema.defaultJavaPackageDao}.DaoSession;
+import ${schema.javaPackageMasterSession}.DaoSession;
 import de.greenrobot.dao.DaoException;
 
 </#if>
