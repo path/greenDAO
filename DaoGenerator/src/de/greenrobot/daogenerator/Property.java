@@ -34,6 +34,10 @@ public class Property {
             property = new Property(schema, entity, propertyType, propertyName);
         }
 
+        public PropertyBuilder(Schema schema, Entity entity, PropertyType propertyType, String className, String propertyName) {
+            property = new Property(schema, entity, propertyType, className, propertyName);
+        }
+
         public PropertyBuilder columnName(String columnName) {
             property.columnName = columnName;
             return this;
@@ -135,6 +139,21 @@ public class Property {
             return this;
         }
 
+        public PropertyBuilder useBean() {
+            property.useBean = true;
+            return this;
+        }
+
+        public PropertyBuilder addImport(String imp) {
+            property.imports.add(imp);
+            return this;
+        }
+
+        public PropertyBuilder setConcreteClassName(String className) {
+            property.concreteClassName = className;
+            return this;
+        }
+
         public Property getProperty() {
             return property;
         }
@@ -147,6 +166,8 @@ public class Property {
 
     private String columnName;
     private String columnType;
+    private String className;
+    private String concreteClassName;
 
     private boolean primaryKey;
     private boolean pkAsc;
@@ -159,12 +180,14 @@ public class Property {
     private boolean constant;
     private SerializedProperty serialized;
     private EnumProperty enumarated;
+    private boolean useBean = false;
 
     private Entity backingEntity;
 
     private List<Annotation> fieldAnnotations = new ArrayList<Annotation>();
     private List<Annotation> setterAnnotations = new ArrayList<Annotation>();
     private List<Annotation> getterAnnotations = new ArrayList<Annotation>();
+    private List<String> imports = new ArrayList<String>();
 
     /** Initialized in 2nd pass */
     private String constraints;
@@ -174,10 +197,16 @@ public class Property {
     private String javaType;
 
     public Property(Schema schema, Entity entity, PropertyType propertyType, String propertyName) {
+        this(schema, entity, propertyType, null, propertyName);
+    }
+
+    public Property(Schema schema, Entity entity, PropertyType propertyType, String className, String propertyName) {
         this.schema = schema;
         this.entity = entity;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
+        this.className = className;
+        this.concreteClassName = className;
     }
 
     public String getPropertyName() {
@@ -240,6 +269,8 @@ public class Property {
         return constant;
     }
 
+    public boolean isUseBean() { return useBean; }
+
     public String getJavaType() {
         return javaType;
     }
@@ -254,6 +285,14 @@ public class Property {
 
     public Entity getEntity() {
         return entity;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public String getConcreteClassName() {
+        return concreteClassName;
     }
 
     public List<Annotation> getFieldAnnotations() {
@@ -280,6 +319,10 @@ public class Property {
         this.backingEntity = backingEntity;
     }
 
+    public List<String> getImports() {
+        return imports;
+    }
+
     void init2ndPass() {
         initConstraint();
         if (columnType == null) {
@@ -288,10 +331,15 @@ public class Property {
         if (columnName == null) {
             columnName = DaoUtil.dbName(propertyName);
         }
-        if (notNull) {
-            javaType = schema.mapToJavaTypeNotNull(propertyType);
+
+        if (propertyType == PropertyType.Enum || propertyType == PropertyType.Class) {
+            javaType = className;
         } else {
-            javaType = schema.mapToJavaTypeNullable(propertyType);
+            if (notNull) {
+                javaType = schema.mapToJavaTypeNotNull(propertyType);
+            } else {
+                javaType = schema.mapToJavaTypeNullable(propertyType);
+            }
         }
     }
 

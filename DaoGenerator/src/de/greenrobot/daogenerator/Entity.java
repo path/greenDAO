@@ -61,6 +61,7 @@ public class Entity {
     private final List<Annotation> fullConstructorAnnotations;
     private final List<SerializedProperty> serializedProperties;
     private final List<EnumProperty> enumProperties;
+    private final List<String> imports;
 
     private String tableName;
     private String classNameDao;
@@ -104,6 +105,7 @@ public class Entity {
         fullConstructorAnnotations = new ArrayList<Annotation>();
         serializedProperties = new ArrayList<SerializedProperty>();
         enumProperties = new ArrayList<EnumProperty>();
+        imports = new ArrayList<String>();
         constructors = true;
     }
 
@@ -184,6 +186,29 @@ public class Entity {
                 pb.addSetterGetterAnnotation(basePropertyAnnotation);
         }
         return this.addEnumProperty(pb.getProperty(), propertyName, className);
+    }
+
+    public PropertyBuilder addEnumPropertyOnly(String propertyName, String className) {
+        if (!propertyNames.add(propertyName)) {
+            throw new RuntimeException("Property already defined: " + propertyName);
+        }
+        PropertyBuilder builder = new Property.PropertyBuilder(schema, this, PropertyType.Enum, className, propertyName);
+        properties.add(builder.getProperty());
+        return builder;
+    }
+
+    public PropertyBuilder addClassPropertyOnly(String propertyName, String className) {
+        return addClassPropertyOnly(propertyName, className, className);
+    }
+
+    public PropertyBuilder addClassPropertyOnly(String propertyName, String className, String concreteClassName) {
+        if (!propertyNames.add(propertyName)) {
+            throw new RuntimeException("Property already defined: " + propertyName);
+        }
+        PropertyBuilder builder = new Property.PropertyBuilder(schema, this, PropertyType.Class, className, propertyName);
+        builder.setConcreteClassName(concreteClassName);
+        properties.add(builder.getProperty());
+        return builder;
     }
 
     public List<SerializedProperty> getSerializedProperties() {
@@ -512,7 +537,7 @@ public class Entity {
     }
 
     public void implementsSerializable() {
-        interfacesToImplement.add("java.io.Serializable");
+        interfacesToImplement.add("Serializable");
     }
 
     public List<Annotation> getAnnotations() {
@@ -533,6 +558,16 @@ public class Entity {
 
     public void setSuperclass(String classToExtend) {
         this.superclass = classToExtend;
+    }
+
+    public void addImport(String... imports) {
+        for (String imp : imports) {
+            this.imports.add(imp);
+        }
+    }
+
+    public List<String> getImports() {
+        return imports;
     }
 
     void init2ndPass() {

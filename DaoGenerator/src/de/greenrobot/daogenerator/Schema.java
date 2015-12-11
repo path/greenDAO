@@ -70,6 +70,8 @@ public class Schema {
         propertyToDbType.put(PropertyType.ByteArray, "BLOB");
         propertyToDbType.put(PropertyType.Date, "INTEGER");
         propertyToDbType.put(PropertyType.StringList, "TEXT");
+        propertyToDbType.put(PropertyType.Enum, "INTEGER");
+        propertyToDbType.put(PropertyType.Class, "BLOB");
 
         propertyToJavaTypeNotNull = new HashMap<PropertyType, String>();
         propertyToJavaTypeNotNull.put(PropertyType.Boolean, "boolean");
@@ -83,6 +85,8 @@ public class Schema {
         propertyToJavaTypeNotNull.put(PropertyType.ByteArray, "byte[]");
         propertyToJavaTypeNotNull.put(PropertyType.Date, "java.util.Date");
         propertyToJavaTypeNotNull.put(PropertyType.StringList, "java.util.List<String>");
+        propertyToJavaTypeNotNull.put(PropertyType.Enum, "int");
+        propertyToJavaTypeNotNull.put(PropertyType.Class, "byte[]");
 
         propertyToJavaTypeNullable = new HashMap<PropertyType, String>();
         propertyToJavaTypeNullable.put(PropertyType.Boolean, "Boolean");
@@ -96,6 +100,8 @@ public class Schema {
         propertyToJavaTypeNullable.put(PropertyType.ByteArray, "byte[]");
         propertyToJavaTypeNullable.put(PropertyType.Date, "java.util.Date");
         propertyToJavaTypeNullable.put(PropertyType.StringList, "java.util.List<String>");
+        propertyToJavaTypeNullable.put(PropertyType.Enum, "Integer");
+        propertyToJavaTypeNullable.put(PropertyType.Class, "byte[]");
     }
 
     /**
