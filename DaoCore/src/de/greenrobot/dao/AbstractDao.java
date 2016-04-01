@@ -22,12 +22,8 @@ import android.database.CursorWindow;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Base class for all DAOs: Implements entity operations like insert, load, delete, and query.
@@ -693,10 +689,11 @@ public abstract class AbstractDao<T, K> {
         return db;
     }
 
+    @SuppressWarnings("unused")
     public static List<String> deserializeStringList(String stringList) {
         List<String> list = new ArrayList<String>();
         if (stringList != null) {
-            String[] split = StringUtils.split(stringList, ",");
+            String[] split = splitWorker(stringList, ",", -1, false);
             for (String s : split) {
                 list.add(s);
             }
@@ -704,11 +701,12 @@ public abstract class AbstractDao<T, K> {
         return list;
     }
 
+    @SuppressWarnings("unused")
     public static String serializeStringList(List<String> items) {
         if(items == null) {
             return null;
         }
-        return StringUtils.join(items, ",");
+        return join(items.iterator(), ",");
     }
 
     /** Reads the values from the current position of the given cursor and returns a new entity. */
@@ -738,4 +736,121 @@ public abstract class AbstractDao<T, K> {
     /** Returns true if the Entity class can be updated, e.g. for setting the PK after insert. */
     abstract protected boolean isEntityUpdateable();
 
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+    private static String[] splitWorker(String str, String separatorChars, int max, boolean preserveAllTokens) {
+        // Performance tuned for 2.0 (JDK1.4)
+        // Direct code is quicker than StringTokenizer.
+        // Also, StringTokenizer uses isSpace() not isWhitespace()
+
+        if (str == null) {
+            return null;
+        }
+        int len = str.length();
+        if (len == 0) {
+            return EMPTY_STRING_ARRAY;
+        }
+        List<String> list = new ArrayList<String>();
+        int sizePlus1 = 1;
+        int i = 0, start = 0;
+        boolean match = false;
+        boolean lastMatch = false;
+        if (separatorChars == null) {
+            // Null separator means use whitespace
+            while (i < len) {
+                if (Character.isWhitespace(str.charAt(i))) {
+                    if (match || preserveAllTokens) {
+                        lastMatch = true;
+                        if (sizePlus1++ == max) {
+                            i = len;
+                            lastMatch = false;
+                        }
+                        list.add(str.substring(start, i));
+                        match = false;
+                    }
+                    start = ++i;
+                    continue;
+                }
+                lastMatch = false;
+                match = true;
+                i++;
+            }
+        } else if (separatorChars.length() == 1) {
+            // Optimise 1 character case
+            char sep = separatorChars.charAt(0);
+            while (i < len) {
+                if (str.charAt(i) == sep) {
+                    if (match || preserveAllTokens) {
+                        lastMatch = true;
+                        if (sizePlus1++ == max) {
+                            i = len;
+                            lastMatch = false;
+                        }
+                        list.add(str.substring(start, i));
+                        match = false;
+                    }
+                    start = ++i;
+                    continue;
+                }
+                lastMatch = false;
+                match = true;
+                i++;
+            }
+        } else {
+            // standard case
+            while (i < len) {
+                if (separatorChars.indexOf(str.charAt(i)) >= 0) {
+                    if (match || preserveAllTokens) {
+                        lastMatch = true;
+                        if (sizePlus1++ == max) {
+                            i = len;
+                            lastMatch = false;
+                        }
+                        list.add(str.substring(start, i));
+                        match = false;
+                    }
+                    start = ++i;
+                    continue;
+                }
+                lastMatch = false;
+                match = true;
+                i++;
+            }
+        }
+        if (match || preserveAllTokens && lastMatch) {
+            list.add(str.substring(start, i));
+        }
+        return list.toArray(new String[list.size()]);
+    }
+
+    private static String join(Iterator<?> iterator, String separator) {
+
+        // handle null, zero and one elements before building a buffer
+        if (iterator == null) {
+            return null;
+        }
+        if (!iterator.hasNext()) {
+            return "";
+        }
+        Object first = iterator.next();
+        if (!iterator.hasNext()) {
+            return first == null ? "" : first.toString();
+        }
+
+        // two or more elements
+        StringBuilder buf = new StringBuilder(256); // Java default is 16, probably too small
+        if (first != null) {
+            buf.append(first);
+        }
+
+        while (iterator.hasNext()) {
+            if (separator != null) {
+                buf.append(separator);
+            }
+            Object obj = iterator.next();
+            if (obj != null) {
+                buf.append(obj);
+            }
+        }
+        return buf.toString();
+    }
 }
